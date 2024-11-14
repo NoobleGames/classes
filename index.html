@@ -6,62 +6,143 @@
     <title>Class Countdown Timer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #00bcd4, #2196f3);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
+            color: white;
         }
+
         .timer-container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 380px;
         }
-        .timer {
+
+        h1 {
             font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffeb3b;
+        }
+
+        .timer {
+            font-size: 60px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            background: -webkit-linear-gradient(45deg, #ff5722, #ff9800);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        .status {
+            font-size: 20px;
             margin-top: 20px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #bbb;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 10px #ff5722, 0 0 20px #ff5722, 0 0 30px #ff5722, 0 0 40px #ff5722;
+            }
+            100% {
+                text-shadow: 0 0 30px #ff5722, 0 0 50px #ff5722, 0 0 70px #ff5722, 0 0 90px #ff5722;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 30px;
+            }
+
+            .timer {
+                font-size: 50px;
+            }
+
+            .status {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="timer-container">
-        <h1>Next Class Countdown</h1>
+        <h1>Next Period Countdown</h1>
         <div id="countdown" class="timer">Loading...</div>
+        <div id="status" class="status">Period: </div>
     </div>
 
     <script>
         function updateCountdown() {
             const now = new Date();
             
-            // Define class end times
+            // Define class end times with 5-minute breaks
             const classTimes = [
-                { name: "Period 1", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 51, 0, 0) },
-                { name: "Period 2", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 46, 0, 0) },
-                { name: "Period 3", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 41, 0, 0) },
-                { name: "Lunch", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 6, 0, 0) },
-                { name: "Period 4", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 1, 0, 0) },
-                { name: "Period 5", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 56, 0, 0) },
-                { name: "Period 6", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 51, 0, 0) },
-                { name: "Period 7", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 46, 0, 0) },
-                { name: "Period 8", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 15, 0, 0) }
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 51, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 56, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 46, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 51, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 41, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 6, 0, 0) }, // Lunch
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 11, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 1, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 6, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 56, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 1, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 51, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 56, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 46, 0, 0) },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 51, 0, 0) }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 15, 0, 0) }
+            ];
+
+            const periodNames = [
+                "Period 1",
+                "Break",
+                "Period 2",
+                "Break",
+                "Period 3",
+                "Lunch",
+                "Break",
+                "Period 4",
+                "Break",
+                "Period 5",
+                "Break",
+                "Period 6",
+                "Break",
+                "Period 7",
+                "Break",
+                "Period 8"
             ];
 
             // Check for the next period
             let nextPeriod = null;
+            let nextPeriodName = '';
             for (let i = 0; i < classTimes.length; i++) {
                 if (now < classTimes[i].end) {
                     nextPeriod = classTimes[i];
+                    nextPeriodName = periodNames[i];
                     break;
                 }
             }
 
             if (!nextPeriod) {
                 document.getElementById('countdown').textContent = "No more classes for today!";
+                document.getElementById('status').textContent = "";
                 return;
             }
 
@@ -70,7 +151,8 @@
             const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-            document.getElementById('countdown').textContent = `${nextPeriod.name}: ${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('countdown').textContent = `${hours}h ${minutes}m ${seconds}s`;
+            document.getElementById('status').textContent = `Next: ${nextPeriodName}`;
         }
 
         setInterval(updateCountdown, 1000); // Update every second
@@ -79,3 +161,4 @@
 
 </body>
 </html>
+
