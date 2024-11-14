@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .timer-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .timer {
+            font-size: 36px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="timer-container">
+        <h1>Next Class Countdown</h1>
+        <div id="countdown" class="timer">Loading...</div>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const now = new Date();
+            
+            // Define class end times
+            const classTimes = [
+                { name: "Period 1", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 51, 0, 0) },
+                { name: "Period 2", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 46, 0, 0) },
+                { name: "Period 3", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 41, 0, 0) },
+                { name: "Lunch", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 6, 0, 0) },
+                { name: "Period 4", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 1, 0, 0) },
+                { name: "Period 5", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 56, 0, 0) },
+                { name: "Period 6", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 51, 0, 0) },
+                { name: "Period 7", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 46, 0, 0) },
+                { name: "Period 8", end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 15, 0, 0) }
+            ];
+
+            // Check for the next period
+            let nextPeriod = null;
+            for (let i = 0; i < classTimes.length; i++) {
+                if (now < classTimes[i].end) {
+                    nextPeriod = classTimes[i];
+                    break;
+                }
+            }
+
+            if (!nextPeriod) {
+                document.getElementById('countdown').textContent = "No more classes for today!";
+                return;
+            }
+
+            const timeLeft = nextPeriod.end - now;
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').textContent = `${nextPeriod.name}: ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        setInterval(updateCountdown, 1000); // Update every second
+        updateCountdown(); // Initial call to display countdown
+    </script>
+
+</body>
+</html>
