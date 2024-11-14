@@ -36,20 +36,20 @@
             color: #fff;
         }
 
+        .current-period {
+            font-size: 20px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: #bbb;
+        }
+
         .timer {
             font-size: 60px;
             font-weight: 700;
             letter-spacing: 4px;
             color: #ffffff;
             text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff;
-        }
-
-        .status {
-            font-size: 20px;
-            margin-top: 20px;
-            text-transform: uppercase;
-            font-weight: 500;
-            color: #bbb;
         }
 
         @media (max-width: 600px) {
@@ -61,7 +61,7 @@
                 font-size: 50px;
             }
 
-            .status {
+            .current-period {
                 font-size: 18px;
             }
         }
@@ -71,6 +71,7 @@
 
     <div class="timer-container">
         <h1>Next Period Countdown</h1>
+        <div id="current-period" class="current-period">Current Period: </div>
         <div id="countdown" class="timer">Loading...</div>
         <div id="status" class="status">Period: </div>
     </div>
@@ -81,42 +82,39 @@
             
             // Define class end times with 5-minute breaks
             const classTimes = [
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 51, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 56, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 46, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 51, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 41, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 6, 0, 0) }, // Lunch
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 11, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 1, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 6, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 56, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 1, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 51, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 56, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 46, 0, 0) },
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 51, 0, 0) }, // 5-minute break
-                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 15, 0, 0) }
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 51, 0, 0), name: "Period 1" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 56, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 46, 0, 0), name: "Period 2" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 51, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 41, 0, 0), name: "Period 3" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 6, 0, 0), name: "Lunch" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 11, 11, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 1, 0, 0), name: "Period 4" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 6, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 56, 0, 0), name: "Period 5" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 1, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 51, 0, 0), name: "Period 6" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 13, 56, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 46, 0, 0), name: "Period 7" },
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 14, 51, 0, 0), name: "Break" }, // 5-minute break
+                { end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 15, 15, 0, 0), name: "Period 8" }
             ];
 
-            const periodNames = [
-                "Period 1",
-                "Break",
-                "Period 2",
-                "Break",
-                "Period 3",
-                "Lunch",
-                "Break",
-                "Period 4",
-                "Break",
-                "Period 5",
-                "Break",
-                "Period 6",
-                "Break",
-                "Period 7",
-                "Break",
-                "Period 8"
-            ];
+            // Check for the current period
+            let currentPeriod = null;
+            let currentPeriodName = '';
+            for (let i = 0; i < classTimes.length; i++) {
+                if (now < classTimes[i].end) {
+                    currentPeriod = classTimes[i];
+                    currentPeriodName = classTimes[i].name;
+                    break;
+                }
+            }
+
+            // Update current period info
+            if (currentPeriod) {
+                document.getElementById('current-period').textContent = `Current Period: ${currentPeriodName}`;
+            }
 
             // Check for the next period
             let nextPeriod = null;
@@ -124,16 +122,20 @@
             for (let i = 0; i < classTimes.length; i++) {
                 if (now < classTimes[i].end) {
                     nextPeriod = classTimes[i];
-                    nextPeriodName = periodNames[i];
+                    nextPeriodName = classTimes[i].name;
                     break;
                 }
             }
 
+            // If you're on the last period or class, display the end of the day
             if (!nextPeriod) {
                 document.getElementById('countdown').textContent = "No more classes for today!";
                 document.getElementById('status').textContent = "";
                 return;
             }
+
+            // Ensure that the next period does not show as a "Break" if you're already on break
+            let statusText = (currentPeriodName === "Break" || currentPeriodName === "Lunch") ? "Break" : `Next: ${nextPeriodName}`;
 
             const timeLeft = nextPeriod.end - now;
             const hours = Math.floor(timeLeft / (1000 * 60 * 60));
@@ -141,7 +143,7 @@
             const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
             document.getElementById('countdown').textContent = `${hours}h ${minutes}m ${seconds}s`;
-            document.getElementById('status').textContent = `Next: ${nextPeriodName}`;
+            document.getElementById('status').textContent = statusText;
         }
 
         setInterval(updateCountdown, 1000); // Update every second
